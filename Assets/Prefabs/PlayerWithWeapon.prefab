@@ -3701,7 +3701,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3598161613329981759}
-  - component: {fileID: 1497631450052607842}
   m_Layer: 0
   m_Name: SM_Ak47
   m_TagString: Untagged
@@ -3728,23 +3727,6 @@ Transform:
   - {fileID: 6920752161129424722}
   m_Father: {fileID: 8527045975670914066}
   m_LocalEulerAnglesHint: {x: 0, y: 76.684, z: 0}
---- !u!114 &1497631450052607842
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9156286661702713421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 905bd6f6ec6a220449174054f29759a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 4616628458939508215, guid: 564b1f0baa9c41c499da618591255d90, type: 3}
-  bulletPoint: {fileID: 6920752161129424722}
-  bulletForce: 1
-  fireSound: {fileID: 8300000, guid: af66162561d2eed40ad49268cab318bb, type: 3}
-  fireRate: 0.1
 --- !u!1 &9208786610077733396
 GameObject:
   m_ObjectHideFlags: 0

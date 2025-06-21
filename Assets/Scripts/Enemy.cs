@@ -13,8 +13,8 @@ public class Enemy : MonoBehaviour
     private Vector3 targetPosition;
     private bool movingPositive = true;
 
-    private int hitCount = 0;
-    public int maxHits = 5;
+    private int hitCount = 0; // Tracks the number of hits
+    public int maxHits = 5;   // The maximum hits before destruction
 
     void Start()
     {
@@ -53,19 +53,24 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage()
     {
-        hitCount++;
-        if (hitCount >= maxHits)
+        hitCount++; // Increment hitCount each time TakeDamage is called
+        Debug.Log("Enemy Hit! Current hits: " + hitCount + " (Max: " + maxHits + ")"); // Added for debugging
+        if (hitCount >= maxHits) // Check if hitCount has reached or exceeded maxHits
         {
-            Destroy(gameObject); // Musuh mati
+            Destroy(gameObject); // If so, destroy the GameObject (makes it disappear)
+            Debug.Log("Enemy Destroyed!"); // Added for debugging
         }
     }
 
+    // --- PENTING: HAPUS ATAU KOMENTARI BLOK KODE INI ---
+    /*
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Bullet"))
         {
-            TakeDamage(); // Tambah 1 hit
-            Destroy(other.gameObject); // Hancurkan peluru
+            TakeDamage(); // Ini akan memicu hit kedua jika peluru visual kena
+            Destroy(other.gameObject);
         }
     }
+    */
 }
