@@ -9,11 +9,19 @@ public class CharacterMovement : MonoBehaviour
     public float runSpeed = 5f;
     public float rotationSpeed = 3f;
 
+    [Header("Jump Settings")]
+    public float jumpHeight = 2f; 
+    private float gravity = 9.81f;
+
     private float horizontalInput;
     private float verticalInput;
     private bool isRunning;
 
     private float mouseX;
+    private float mouseY;
+    private float verticalRotation = 0f;
+
+    private bool isGrounded;
 
     void Start()
     {
@@ -31,7 +39,15 @@ public class CharacterMovement : MonoBehaviour
         isRunning = Input.GetKey(KeyCode.LeftShift) && verticalInput > 0;
 
         mouseX = Input.GetAxis("Mouse X");
-        mouseX = Mathf.Clamp(mouseX, -1f, 1f); 
+        mouseY = Input.GetAxis("Mouse Y");
+
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            float jumpForce = Mathf.Sqrt(2 * gravity * jumpHeight);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
 
         UpdateAnimations();
     }
@@ -69,7 +85,6 @@ public class CharacterMovement : MonoBehaviour
     void MoveCharacter()
     {
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
-
         Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput) * currentSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + moveDirection);
     }
@@ -77,9 +92,12 @@ public class CharacterMovement : MonoBehaviour
     void RotateCharacter()
     {
         float yRotation = mouseX * rotationSpeed;
+        float xRotation = -mouseY * rotationSpeed;
 
-        Quaternion deltaRotation = Quaternion.Euler(0f, yRotation, 0f);
+        verticalRotation += xRotation;
+        verticalRotation = Mathf.Clamp(verticalRotation, -60f, 60f);
 
-        rb.MoveRotation(rb.rotation * deltaRotation);
+        Vector3 newRotation = new Vector3(verticalRotation, transform.localEulerAngles.y + yRotation, 0f);
+        transform.localEulerAngles = newRotation;
     }
 }

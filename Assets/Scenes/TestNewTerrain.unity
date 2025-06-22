@@ -1499,9 +1499,17 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 373635194971075413, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
+      propertyPath: jumpHeight
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 373635194971075413, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
       propertyPath: rotationSpeed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 373635194971075413, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 1593090728}
     - target: {fileID: 570036080745771302, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
       propertyPath: m_Name
       value: PlayerWithWeapon
@@ -1512,7 +1520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3410925478390989154, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
       propertyPath: m_Mass
-      value: 20
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3410925478390989154, guid: f33e897581b35284380bad36bb1e69e6, type: 3}
       propertyPath: m_Constraints
