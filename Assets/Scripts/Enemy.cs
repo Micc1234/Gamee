@@ -55,22 +55,18 @@ public class Enemy : MonoBehaviour
     {
         hitCount++; // Increment hitCount each time TakeDamage is called
         Debug.Log("Enemy Hit! Current hits: " + hitCount + " (Max: " + maxHits + ")"); // Added for debugging
+
         if (hitCount >= maxHits) // Check if hitCount has reached or exceeded maxHits
         {
+            // Memanggil OnEnemyDestroyed di EnemyManager untuk mengurangi jumlah musuh yang tersisa
+            EnemyManager enemyManager = FindObjectOfType<EnemyManager>();
+            if (enemyManager != null)
+            {
+                enemyManager.OnEnemyDestroyed();
+            }
+
             Destroy(gameObject); // If so, destroy the GameObject (makes it disappear)
             Debug.Log("Enemy Destroyed!"); // Added for debugging
         }
     }
-
-    // --- PENTING: HAPUS ATAU KOMENTARI BLOK KODE INI ---
-    /*
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Bullet"))
-        {
-            TakeDamage(); // Ini akan memicu hit kedua jika peluru visual kena
-            Destroy(other.gameObject);
-        }
-    }
-    */
 }
