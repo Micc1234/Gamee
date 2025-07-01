@@ -16,16 +16,35 @@ public class Enemy : MonoBehaviour
     private int hitCount = 0; // Tracks the number of hits
     public int maxHits = 5;   // The maximum hits before destruction
 
+    // Optimized: Get reference to EnemyManager once at Start
+    private EnemyManager enemyManager;
+
     void Start()
     {
         initialPosition = transform.position;
         SetTargetPosition();
+
+        // Find and store the reference to EnemyManager
+        enemyManager = FindObjectOfType<EnemyManager>();
+        if (enemyManager == null)
+        {
+            Debug.LogError("EnemyManager not found in the scene! Make sure it's present.");
+        }
+
+        // Set animation for continuous walk if applicable
+        if (animator != null)
+        {
+            // Assuming "IsWalking" is a boolean parameter in your Animator
+            // and controls the default walking animation.
+            animator.SetBool("IsWalking", true);
+        }
     }
 
     void Update()
     {
         AutoMove();
-        UpdateAnimations();
+        // UpdateAnimations() is no longer called every frame if "IsWalking" is set once in Start.
+        // If you have other animations to trigger based on actions, add them here.
     }
 
     void AutoMove()
@@ -41,32 +60,35 @@ public class Enemy : MonoBehaviour
 
     void SetTargetPosition()
     {
+        // Use transform.right for X-axis and transform.forward for Z-axis movement relative to the enemy's local orientation.
+        // If you want world X or Z, use Vector3.right or Vector3.forward respectively.
         Vector3 directionVector = moveDirection == MoveDirection.Horizontal ? transform.right : transform.forward;
         targetPosition = initialPosition + (movingPositive ? directionVector : -directionVector) * moveDistance;
     }
 
-    void UpdateAnimations()
-    {
-        if (animator != null)
-            animator.SetTrigger("walk");
-    }
-
+    // Public method to be called when the enemy takes damage
     public void TakeDamage()
     {
-        hitCount++; // Increment hitCount each time TakeDamage is called
-        Debug.Log("Enemy Hit! Current hits: " + hitCount + " (Max: " + maxHits + ")"); // Added for debugging
+        hitCount++;
+        Debug.Log("Enemy Hit! Current hits: " + hitCount + " (Max: " + maxHits + ")");
 
-        if (hitCount >= maxHits) // Check if hitCount has reached or exceeded maxHits
+        // Optional: Add visual/audio feedback here for when the enemy is hit but not destroyed
+        // Example: Play a hit sound, change color temporarily, etc.
+
+        if (hitCount >= maxHits)
         {
-            // Memanggil OnEnemyDestroyed di EnemyManager untuk mengurangi jumlah musuh yang tersisa
-            EnemyManager enemyManager = FindObjectOfType<EnemyManager>();
+            // Call OnEnemyDestroyed on the EnemyManager to update the remaining enemy count
             if (enemyManager != null)
             {
                 enemyManager.OnEnemyDestroyed();
             }
+            else
+            {
+                Debug.LogWarning("EnemyManager reference is null. Enemy count will not be updated.");
+            }
 
-            Destroy(gameObject); // If so, destroy the GameObject (makes it disappear)
-            Debug.Log("Enemy Destroyed!"); // Added for debugging
+            Destroy(gameObject); // Destroy the enemy GameObject
+            Debug.Log("Enemy Destroyed!");
         }
     }
 }
