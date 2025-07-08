@@ -1,36 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Make sure to include this for TextMeshPro
+using TMPro; // Untuk TextMeshPro
+using UnityEngine.SceneManagement; // Untuk berpindah scene
 
 public class EnemyManager : MonoBehaviour
 {
-    public GameObject enemyPrefab;          // Prefab enemy yang akan di-spawn
-    public float spawnAreaWidth = 10f;      // Lebar area spawn (X)
-    public float spawnAreaLength = 10f;     // Panjang area spawn (Z)
-    public float spawnY = 1.74f;            // Ketinggian spawn (Y)
-    public int totalEnemiesToSpawn = 10;    // Total musuh yang akan di-spawn
-    public TextMeshProUGUI enemyCountText;  // UI Text untuk menampilkan jumlah musuh yang tersisa
+    public GameObject enemyPrefab;
+    public float spawnAreaWidth = 10f;
+    public float spawnAreaLength = 10f;
+    public float spawnY = 1.74f;
+    public int totalEnemiesToSpawn = 10;
+    public TextMeshProUGUI enemyCountText;
 
-    // --- New variables for time limit ---
-    public float gameDuration = 60f;        // Durasi total permainan dalam detik (1 menit)
-    public TextMeshProUGUI gameTimerText;   // UI Text untuk menampilkan sisa waktu
-    public GameObject gameOverPanel;        // Panel UI untuk kondisi kalah (Time Over)
-    public GameObject gameWonPanel;         // Panel UI untuk kondisi menang (Enemies Defeated)
-    // --- End new variables ---
+    public float gameDuration = 60f;
+    public TextMeshProUGUI gameTimerText;
+    public GameObject gameOverPanel;
+    public GameObject gameWonPanel;
 
-    private int remainingEnemies;           // Menyimpan jumlah musuh yang tersisa
-    private float timeRemaining;            // Menyimpan sisa waktu
-    private bool gameEnded = false;         // Flag untuk menandakan apakah game sudah berakhir
+    private int remainingEnemies;
+    private float timeRemaining;
+    private bool gameEnded = false;
 
     void Start()
     {
-        remainingEnemies = totalEnemiesToSpawn;    // Set jumlah musuh yang tersisa
-        UpdateEnemyCountUI();                      // Update tampilan UI
+        remainingEnemies = totalEnemiesToSpawn;
+        UpdateEnemyCountUI();
 
-        timeRemaining = gameDuration;              // Inisialisasi waktu
-        UpdateGameTimerUI();                       // Update tampilan UI waktu
+        timeRemaining = gameDuration;
+        UpdateGameTimerUI();
 
-        // Pastikan panel game over dan game won nonaktif di awal
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(false);
@@ -45,45 +43,38 @@ public class EnemyManager : MonoBehaviour
 
     void Update()
     {
-        if (!gameEnded) // Hanya jalankan timer jika game belum berakhir
+        if (!gameEnded)
         {
             if (timeRemaining > 0)
             {
-                timeRemaining -= Time.deltaTime; // Kurangi waktu setiap frame
-                UpdateGameTimerUI();             // Update tampilan UI waktu
+                timeRemaining -= Time.deltaTime;
+                UpdateGameTimerUI();
 
                 if (timeRemaining <= 0)
                 {
-                    timeRemaining = 0; // Pastikan waktu tidak negatif
+                    timeRemaining = 0;
                     UpdateGameTimerUI();
-                    GameOver(); // Panggil fungsi game over jika waktu habis
+                    GameOver();
                 }
             }
         }
     }
 
-    // Fungsi untuk spawn semua musuh
     private void SpawnAllEnemies()
     {
         for (int i = 0; i < totalEnemiesToSpawn; i++)
         {
-            SpawnEnemy(); // Spawn musuh
+            SpawnEnemy();
         }
     }
 
-    // Fungsi untuk spawn musuh di posisi acak
     private void SpawnEnemy()
     {
         if (enemyPrefab != null)
         {
-            // Generate posisi acak dalam area yang ditentukan
             float randomX = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2);
             float randomZ = Random.Range(-spawnAreaLength / 2, spawnAreaLength / 2);
-
-            // Set posisi spawn dengan Y tetap 1.74
             Vector3 spawnPosition = new Vector3(randomX, spawnY, randomZ);
-
-            // Spawn musuh pada posisi yang telah ditentukan
             Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         }
         else
@@ -92,7 +83,6 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    // Fungsi untuk mengupdate UI jumlah musuh yang tersisa
     private void UpdateEnemyCountUI()
     {
         if (enemyCountText != null)
@@ -101,7 +91,6 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    // Fungsi untuk mengupdate UI sisa waktu
     private void UpdateGameTimerUI()
     {
         if (gameTimerText != null)
@@ -112,55 +101,42 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    // Fungsi untuk mengurangi jumlah musuh ketika musuh dihancurkan
     public void OnEnemyDestroyed()
     {
-        if (gameEnded) return; // Jangan lakukan apa-apa jika game sudah berakhir
+        if (gameEnded) return;
 
         remainingEnemies--;
         UpdateEnemyCountUI();
 
-        // Jika semua musuh dihancurkan, tampilkan kondisi menang
         if (remainingEnemies <= 0)
         {
             WinGame();
         }
     }
 
-    // Fungsi ketika pemain menang
     private void WinGame()
     {
         if (gameEnded) return;
 
         gameEnded = true;
         Debug.Log("You Win! All enemies defeated!");
-        if (gameWonPanel != null)
-        {
-            gameWonPanel.SetActive(true);
-        }
-        // Opsional: Pause game, tampilkan menu kemenangan, dll.
-        Time.timeScale = 0f; // Menghentikan semua pergerakan dalam game
+        Time.timeScale = 1f; // Pastikan waktu normal
+        SceneManager.LoadScene("WinScene"); // Ganti scene ke WinScene
     }
 
-    // Fungsi ketika waktu habis (pemain kalah)
     private void GameOver()
     {
         if (gameEnded) return;
 
         gameEnded = true;
         Debug.Log("Game Over! Time's up!");
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-        }
-        // Opsional: Pause game, tampilkan menu kekalahan, dll.
-        Time.timeScale = 0f; // Menghentikan semua pergerakan dalam game
+        Time.timeScale = 1f; // Pastikan waktu normal
+        SceneManager.LoadScene("LoseScene"); // Ganti scene ke LoseScene
     }
 
-    // Tambahkan ini jika Anda ingin tombol restart atau kembali ke menu
     public void RestartGame()
     {
-        Time.timeScale = 1f; // Pastikan waktu kembali normal
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

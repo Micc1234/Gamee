@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Doc/MainMenu.uss?fileID=7433441132597879392&amp;guid=b605ad77b302b9f4db6faa68d6707d90&amp;type=3" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Doc/bgg.jpg?fileID=2800000&amp;guid=fe6b1a3e33388b2489313ffde92164e9&amp;type=3#bgg&quot;);">
+        <ui:Label text="&#10;" style="height: 25%; width: 40%; align-self: center; background-image: url(&quot;project://database/Assets/UI%20Doc/title.png?fileID=2800000&amp;guid=66dcc066c54980f4cbd6987d3c775554&amp;type=3#title&quot;); align-content: auto;" />
+        <ui:VisualElement name="MenuContainer" style="flex-grow: 1; -unity-text-align: upper-left; align-content: center; justify-content: center; width: 25%; height: 50%; align-self: center; align-items: center;">
+            <ui:Label text="Choose Difficulty : " style="justify-content: center; font-size: 35px; color: rgb(0, 0, 0); -unity-text-align: upper-center; -unity-font-style: bold;" />
+            <ui:VisualElement style="flex-grow: 0;">
+                <ui:Button text="&#10;" name="EasyBtn" style="background-image: url(&quot;project://database/Assets/UI%20Doc/easy.png?fileID=2800000&amp;guid=fbe707af55d2ad44ca8cf3b3799934bb&amp;type=3#easy&quot;); width: 220px; height: 100px; align-self: center;" />
+                <ui:Button text="&#10;" name="HardBtn" style="background-image: url(&quot;project://database/Assets/UI%20Doc/hard.png?fileID=2800000&amp;guid=7c2d9065b54a48644b3bd98b1519936f&amp;type=3#hard&quot;); width: 220px; height: 100px; align-self: center;" />
+            </ui:VisualElement>
+            <ui:Button text="&#10;" name="QuitBtn" style="background-image: url(&quot;project://database/Assets/UI%20Doc/quitbtn.png?fileID=2800000&amp;guid=0cbbcf539e783ab43ad108ac2b3c7ebd&amp;type=3#quitbtn&quot;); width: 220px; height: 100px; align-self: center;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

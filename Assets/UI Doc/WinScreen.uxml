@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Container" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Doc/bg.jpg?fileID=2800000&amp;guid=4db725fa8f41bc549a7ca3b27251673e&amp;type=3#bg&quot;);">
+        <ui:Label style="width: 60%; height: 45%; background-image: url(&quot;project://database/Assets/UI%20Doc/wintext.png?fileID=2800000&amp;guid=ca6142e7dc132d7448f794db606b464f&amp;type=3#wintext&quot;); align-items: auto; align-self: center;" />
+        <ui:Button name="MainMenuBtn" style="width: 20%; background-image: url(&quot;project://database/Assets/UI%20Doc/mainmenu.png?fileID=2800000&amp;guid=bde4e3cc9d36b7c49ae5d56c1286a322&amp;type=3#mainmenu&quot;); align-self: center; height: 15%;" />
+    </ui:VisualElement>
+</ui:UXML>
