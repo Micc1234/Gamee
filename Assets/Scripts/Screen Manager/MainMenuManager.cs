@@ -19,19 +19,17 @@ public class MainMenuUI : MonoBehaviour
         quitBtn = root.Q<Button>("QuitBtn");
 
         if (easyBtn != null)
-            easyBtn.clicked += () => LoadGameScene();
+            easyBtn.clicked += () => LoadGameScene("EasyScene");
 
         if (hardBtn != null)
-            hardBtn.clicked += () => LoadGameScene();
+            hardBtn.clicked += () => LoadGameScene("HardScene");
 
         if (quitBtn != null)
-            quitBtn.clicked += () => QuitGame();
+            quitBtn.clicked += QuitGame;
     }
 
-    private void LoadGameScene()
+    private void LoadGameScene(string sceneName)
     {
-        string sceneName = "GameScene";
-
         if (Application.CanStreamedLevelBeLoaded(sceneName))
         {
             SceneManager.LoadScene(sceneName);

@@ -3,81 +3,75 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public Animator animator;
-    public float moveDistance = 1f;
     public float moveSpeed = 1f;
+    private float minSpeed = 0.5f;
+    private float maxSpeed = 2f;
 
-    public enum MoveDirection { Horizontal, Vertical }
-    public MoveDirection moveDirection = MoveDirection.Horizontal;
+    private Vector3 moveDirection;
+    private float changeDirectionTimer;
+    private float minChangeTime = 1f;
+    private float maxChangeTime = 5f;
 
-    private Vector3 initialPosition;
-    private Vector3 targetPosition;
-    private bool movingPositive = true;
+    private int hitCount = 0;
+    public int maxHits = 3;
 
-    private int hitCount = 0; // Tracks the number of hits
-    public int maxHits = 5;   // The maximum hits before destruction
-
-    // Optimized: Get reference to EnemyManager once at Start
     private EnemyManager enemyManager;
 
     void Start()
     {
-        initialPosition = transform.position;
-        SetTargetPosition();
+        PickNewDirection();
 
-        // Find and store the reference to EnemyManager
         enemyManager = FindObjectOfType<EnemyManager>();
         if (enemyManager == null)
         {
             Debug.LogError("EnemyManager not found in the scene! Make sure it's present.");
         }
 
-        // Set animation for continuous walk if applicable
         if (animator != null)
         {
-            // Assuming "IsWalking" is a boolean parameter in your Animator
-            // and controls the default walking animation.
             animator.SetBool("IsWalking", true);
         }
     }
 
     void Update()
     {
-        AutoMove();
-        // UpdateAnimations() is no longer called every frame if "IsWalking" is set once in Start.
-        // If you have other animations to trigger based on actions, add them here.
-    }
+        MoveInCurrentDirection();
 
-    void AutoMove()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-        if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
+        // Countdown timer
+        changeDirectionTimer -= Time.deltaTime;
+        if (changeDirectionTimer <= 0f)
         {
-            movingPositive = !movingPositive;
-            SetTargetPosition();
+            PickNewDirection();
         }
     }
 
-    void SetTargetPosition()
+    void PickNewDirection()
     {
-        // Use transform.right for X-axis and transform.forward for Z-axis movement relative to the enemy's local orientation.
-        // If you want world X or Z, use Vector3.right or Vector3.forward respectively.
-        Vector3 directionVector = moveDirection == MoveDirection.Horizontal ? transform.right : transform.forward;
-        targetPosition = initialPosition + (movingPositive ? directionVector : -directionVector) * moveDistance;
+        // Random direction on XZ plane
+        Vector2 randomXZ = Random.insideUnitCircle.normalized;
+        moveDirection = new Vector3(randomXZ.x, 0f, randomXZ.y);
+
+        // Random movement speed
+        moveSpeed = Random.Range(minSpeed, maxSpeed);
+
+        // Random time before next direction change
+        changeDirectionTimer = Random.Range(minChangeTime, maxChangeTime);
+
+        Debug.DrawRay(transform.position, moveDirection * 2f, Color.cyan, 1f);
     }
 
-    // Public method to be called when the enemy takes damage
+    void MoveInCurrentDirection()
+    {
+        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+    }
+
     public void TakeDamage()
     {
         hitCount++;
         Debug.Log("Enemy Hit! Current hits: " + hitCount + " (Max: " + maxHits + ")");
 
-        // Optional: Add visual/audio feedback here for when the enemy is hit but not destroyed
-        // Example: Play a hit sound, change color temporarily, etc.
-
         if (hitCount >= maxHits)
         {
-            // Call OnEnemyDestroyed on the EnemyManager to update the remaining enemy count
             if (enemyManager != null)
             {
                 enemyManager.OnEnemyDestroyed();
@@ -87,7 +81,7 @@ public class Enemy : MonoBehaviour
                 Debug.LogWarning("EnemyManager reference is null. Enemy count will not be updated.");
             }
 
-            Destroy(gameObject); // Destroy the enemy GameObject
+            Destroy(gameObject);
             Debug.Log("Enemy Destroyed!");
         }
     }

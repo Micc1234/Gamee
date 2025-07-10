@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class RandomSpawn : MonoBehaviour
 {
-    public Vector3 spawnAreaMin = new Vector3(-50, 0, -50);
-    public Vector3 spawnAreaMax = new Vector3(50, 0, 50);
+    public Vector3 spawnAreaMin = new Vector3(-50, 2, -50);
+    public Vector3 spawnAreaMax = new Vector3(50,2, 50);
 
     void Start()
     {
