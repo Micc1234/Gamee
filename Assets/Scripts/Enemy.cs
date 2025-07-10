@@ -1,68 +1,72 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
 public class Enemy : MonoBehaviour
 {
     public Animator animator;
-    public float moveSpeed = 1f;
-    private float minSpeed = 0.5f;
-    private float maxSpeed = 2f;
+    public float moveDistance = 10f;
+    public float moveSpeed = 5f;
 
-    private Vector3 moveDirection;
-    private float changeDirectionTimer;
-    private float minChangeTime = 1f;
-    private float maxChangeTime = 5f;
+    public enum MoveDirection { Horizontal, Vertical }
+    public MoveDirection moveDirection = MoveDirection.Horizontal;
+
+    private Vector3 initialPosition;
+    private Vector3 targetPosition;
+    private bool movingPositive = true;
 
     private int hitCount = 0;
-    public int maxHits = 3;
+    public int maxHits = 5;
 
     private EnemyManager enemyManager;
+    private Rigidbody rb;
 
     void Start()
     {
-        PickNewDirection();
+        initialPosition = transform.position;
+        SetTargetPosition();
 
+        // Ambil reference Rigidbody
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = true;
+        rb.isKinematic = false;
+        rb.constraints = RigidbodyConstraints.FreezeRotation; // Supaya tidak jatuh atau miring
+
+        // Cek EnemyManager
         enemyManager = FindObjectOfType<EnemyManager>();
         if (enemyManager == null)
         {
             Debug.LogError("EnemyManager not found in the scene! Make sure it's present.");
         }
 
+        // Animasi jalan
         if (animator != null)
         {
             animator.SetBool("IsWalking", true);
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        MoveInCurrentDirection();
+        AutoMove();
+    }
 
-        // Countdown timer
-        changeDirectionTimer -= Time.deltaTime;
-        if (changeDirectionTimer <= 0f)
+    void AutoMove()
+    {
+        Vector3 nextPosition = Vector3.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(nextPosition);
+
+        if (Vector3.Distance(rb.position, targetPosition) < 0.01f)
         {
-            PickNewDirection();
+            movingPositive = !movingPositive;
+            SetTargetPosition();
         }
     }
 
-    void PickNewDirection()
+    void SetTargetPosition()
     {
-        // Random direction on XZ plane
-        Vector2 randomXZ = Random.insideUnitCircle.normalized;
-        moveDirection = new Vector3(randomXZ.x, 0f, randomXZ.y);
-
-        // Random movement speed
-        moveSpeed = Random.Range(minSpeed, maxSpeed);
-
-        // Random time before next direction change
-        changeDirectionTimer = Random.Range(minChangeTime, maxChangeTime);
-
-        Debug.DrawRay(transform.position, moveDirection * 2f, Color.cyan, 1f);
-    }
-
-    void MoveInCurrentDirection()
-    {
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        Vector3 directionVector = moveDirection == MoveDirection.Horizontal ? transform.right : transform.forward;
+        targetPosition = initialPosition + (movingPositive ? directionVector : -directionVector) * moveDistance;
     }
 
     public void TakeDamage()

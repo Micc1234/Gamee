@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Untuk TextMeshPro
-using UnityEngine.SceneManagement; // Untuk berpindah scene
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class EnemyManager : MonoBehaviour
 {
     public GameObject enemyPrefab;
-    public float spawnAreaWidth = 10f;
-    public float spawnAreaLength = 10f;
+    public Transform[] spawnPoints; // Gunakan GameObject kosong sebagai titik spawn
     public float spawnY = 1.74f;
     public int totalEnemiesToSpawn = 10;
     public TextMeshProUGUI enemyCountText;
@@ -29,33 +28,24 @@ public class EnemyManager : MonoBehaviour
         timeRemaining = gameDuration;
         UpdateGameTimerUI();
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
-        if (gameWonPanel != null)
-        {
-            gameWonPanel.SetActive(false);
-        }
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (gameWonPanel != null) gameWonPanel.SetActive(false);
 
         SpawnAllEnemies();
     }
 
     void Update()
     {
-        if (!gameEnded)
+        if (!gameEnded && timeRemaining > 0)
         {
-            if (timeRemaining > 0)
-            {
-                timeRemaining -= Time.deltaTime;
-                UpdateGameTimerUI();
+            timeRemaining -= Time.deltaTime;
+            UpdateGameTimerUI();
 
-                if (timeRemaining <= 0)
-                {
-                    timeRemaining = 0;
-                    UpdateGameTimerUI();
-                    GameOver();
-                }
+            if (timeRemaining <= 0)
+            {
+                timeRemaining = 0;
+                UpdateGameTimerUI();
+                GameOver();
             }
         }
     }
@@ -70,17 +60,26 @@ public class EnemyManager : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        if (enemyPrefab != null)
+        if (enemyPrefab == null || spawnPoints.Length == 0)
         {
-            float randomX = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2);
-            float randomZ = Random.Range(-spawnAreaLength / 2, spawnAreaLength / 2);
-            Vector3 spawnPosition = new Vector3(randomX, spawnY, randomZ);
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            Debug.LogError("Enemy prefab atau spawn point belum diatur!");
+            return;
         }
-        else
-        {
-            Debug.LogError("EnemyPrefab belum diatur di Inspector!");
-        }
+
+        // Pilih spawn point acak
+        Transform chosenSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+
+        // Tambahkan offset acak agar tidak terlalu menumpuk
+        float offsetX = Random.Range(-4f, 4f);
+        float offsetZ = Random.Range(-4f, 4f);
+
+        Vector3 spawnPosition = new Vector3(
+            chosenSpawnPoint.position.x + offsetX,
+            spawnY,
+            chosenSpawnPoint.position.z + offsetZ
+        );
+
+        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
     }
 
     private void UpdateEnemyCountUI()
@@ -97,7 +96,7 @@ public class EnemyManager : MonoBehaviour
         {
             int minutes = Mathf.FloorToInt(timeRemaining / 60);
             int seconds = Mathf.FloorToInt(timeRemaining % 60);
-            gameTimerText.text = string.Format("Time : {0:00}:{1:00}", minutes, seconds);
+            gameTimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }
     }
 
@@ -120,8 +119,8 @@ public class EnemyManager : MonoBehaviour
 
         gameEnded = true;
         Debug.Log("You Win! All enemies defeated!");
-        Time.timeScale = 1f; // Pastikan waktu normal
-        SceneManager.LoadScene("WinScene"); // Ganti scene ke WinScene
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("WinScene");
     }
 
     private void GameOver()
@@ -130,8 +129,8 @@ public class EnemyManager : MonoBehaviour
 
         gameEnded = true;
         Debug.Log("Game Over! Time's up!");
-        Time.timeScale = 1f; // Pastikan waktu normal
-        SceneManager.LoadScene("LoseScene"); // Ganti scene ke LoseScene
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("LoseScene");
     }
 
     public void RestartGame()
